@@ -1,0 +1,129 @@
+{
+  "name": "download-manager",
+  "version": "1.0.0",
+  "homepage": "https://github.com/yashar1919/download_manager",
+  "description": "A minimalist, production-ready desktop download manager for Linux built with Electron and React",
+  "license": "MIT",
+  "author": "Yashar <yashar@example.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yashar1919/download_manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yashar1919/download_manager/issues"
+  },
+  "keywords": [
+    "download",
+    "manager",
+    "downloader",
+    "linux",
+    "electron",
+    "desktop",
+    "file-transfer",
+    "http-download",
+    "pause-resume",
+    "file-manager"
+  ],
+  "type": "commonjs",
+  "main": "main/index.js",
+  "scripts": {
+    "dev:renderer": "vite",
+    "dev:electron": "electron . --no-sandbox --disable-gpu",
+    "dev": "concurrently \"npm run dev:renderer\" \"wait-on http://localhost:5173 && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 npm run dev:electron\"",
+    "build:renderer": "vite build",
+    "build": "npm run build:renderer && electron-builder",
+    "build:linux": "npm run build:renderer && electron-builder --linux",
+    "build:windows": "npm run build:renderer && electron-builder --windows",
+    "pack": "electron-builder --dir",
+    "dist": "npm run build:renderer && electron-builder --linux deb",
+    "dist:appimage": "npm run build:renderer && electron-builder --linux AppImage",
+    "dist:windows": "electron-builder --windows nsis",
+    "dist:all": "npm run build:renderer && electron-builder --linux --windows",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.2",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^39.2.7",
+    "electron-builder": "^26.0.12",
+    "vite": "^7.3.0",
+    "wait-on": "^9.0.3"
+  },
+  "dependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "build": {
+    "appId": "com.downloadmanager.app",
+    "productName": "Download Manager",
+    "icon": "build/icons/icon.png",
+    "files": [
+      "dist/**",
+      "main/**",
+      "package.json",
+      "node_modules/**"
+    ],
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icons/icon.ico",
+      "artifactName": "${productName}-${version}-Setup.${ext}",
+      "fileAssociations": []
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Download Manager",
+      "installerIcon": "build/icons/icon.ico",
+      "uninstallerIcon": "build/icons/icon.ico",
+      "installerHeaderIcon": "build/icons/icon.ico",
+      "license": "LICENSE",
+      "warningsAsErrors": false
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-Portable.${ext}"
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "AppImage"
+      ],
+      "category": "Utility",
+      "maintainer": "Yashar <yashar@example.com>",
+      "vendor": "Download Manager",
+      "synopsis": "Minimalist desktop download manager",
+      "description": "A beautiful and minimalist desktop download manager designed for Linux with pause/resume support",
+      "mimeTypes": [],
+      "desktop": {
+        "entry": {
+          "Name": "Download Manager",
+          "Comment": "Minimalist desktop download manager",
+          "Categories": "Utility;Network;",
+          "Keywords": "Download;Manager;Downloader;File;Transfer;",
+          "StartupWMClass": "Download Manager"
+        }
+      }
+    }
+  }
+}
