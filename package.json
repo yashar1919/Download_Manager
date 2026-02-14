@@ -84,7 +84,6 @@
         }
       ],
       "icon": "build/icons/icon.ico",
-      "artifactName": "${productName}-${version}-Setup.${ext}",
       "fileAssociations": []
     },
     "nsis": {
