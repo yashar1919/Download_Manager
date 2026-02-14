@@ -10,19 +10,49 @@ import React, { useState, useEffect } from "react";
 export default function DownloadDialog({
   url,
   metadata,
+  defaultDirectory,
   onConfirm,
   onCancel,
   isLoading,
 }) {
   const [filename, setFilename] = useState("");
   const [destination, setDestination] = useState("");
+  const [destinationDir, setDestinationDir] = useState("");
   const [error, setError] = useState("");
+
+  const extractDirectory = (filePath) => {
+    if (!filePath) return "";
+    const slashIndex = Math.max(
+      filePath.lastIndexOf("/"),
+      filePath.lastIndexOf("\\"),
+    );
+    return slashIndex > 0 ? filePath.slice(0, slashIndex) : "";
+  };
+
+  const joinPath = (dir, file) => {
+    if (!dir) return file;
+    const separator = dir.includes("\\") ? "\\" : "/";
+    return dir.endsWith(separator)
+      ? `${dir}${file}`
+      : `${dir}${separator}${file}`;
+  };
 
   useEffect(() => {
     if (metadata && metadata.fileName) {
       setFilename(metadata.fileName);
     }
   }, [metadata]);
+
+  useEffect(() => {
+    if (!destination && defaultDirectory) {
+      setDestinationDir(defaultDirectory);
+    }
+  }, [defaultDirectory, destination]);
+
+  useEffect(() => {
+    if (!destinationDir || !filename.trim()) return;
+    setDestination(joinPath(destinationDir, filename.trim()));
+  }, [destinationDir, filename]);
 
   const formatFileSize = (bytes) => {
     if (bytes === 0) return "Unknown";
@@ -34,11 +64,14 @@ export default function DownloadDialog({
 
   const selectDestination = async () => {
     try {
+      const defaultDir = destinationDir || defaultDirectory || "";
       const selected = await window.electron?.download?.selectDestination?.(
-        filename
+        filename,
+        defaultDir,
       );
       if (selected) {
         setDestination(selected);
+        setDestinationDir(extractDirectory(selected));
         setError("");
       }
     } catch (err) {

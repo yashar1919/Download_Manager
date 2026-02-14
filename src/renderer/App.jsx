@@ -12,6 +12,47 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [theme, setTheme] = useState("system");
   const [error, setError] = useState("");
+  const [lastSaveDirectory, setLastSaveDirectory] = useState(() => {
+    try {
+      return localStorage.getItem("dm-last-save-dir") || "";
+    } catch {
+      return "";
+    }
+  });
+
+  const getDirectoryFromPath = (filePath) => {
+    if (!filePath) return "";
+    const slashIndex = Math.max(
+      filePath.lastIndexOf("/"),
+      filePath.lastIndexOf("\\"),
+    );
+    return slashIndex > 0 ? filePath.slice(0, slashIndex) : "";
+  };
+
+  useEffect(() => {
+    if (!downloads.length) return;
+    const latest = downloads.reduce((acc, entry) => {
+      if (!entry?.destinationPath) return acc;
+      if (!acc) return entry;
+      const entryTime =
+        typeof entry.startTime === "number" ? entry.startTime : 0;
+      const accTime = typeof acc.startTime === "number" ? acc.startTime : 0;
+      return entryTime >= accTime ? entry : acc;
+    }, null);
+
+    const latestDir = latest?.destinationPath
+      ? getDirectoryFromPath(latest.destinationPath)
+      : "";
+
+    if (latestDir && latestDir !== lastSaveDirectory) {
+      setLastSaveDirectory(latestDir);
+      try {
+        localStorage.setItem("dm-last-save-dir", latestDir);
+      } catch {
+        // Ignore storage errors
+      }
+    }
+  }, [downloads, lastSaveDirectory]);
 
   const applyTheme = (t) => {
     const resolved =
@@ -320,6 +361,7 @@ export default function App() {
         <DownloadDialog
           url={currentUrl}
           metadata={currentMetadata}
+          defaultDirectory={lastSaveDirectory}
           onConfirm={handleDownloadConfirm}
           onCancel={handleDialogCancel}
           isLoading={isLoading}

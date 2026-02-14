@@ -29,23 +29,30 @@ ipcMain.handle('download-fetch-metadata', async (event, url) => {
 /**
  * IPC Handler: Select download destination directory
  */
-ipcMain.handle('download-select-destination', async (event, defaultFilename) => {
-    try {
-        const result = await dialog.showSaveDialog({
-            defaultPath: path.join(os.homedir(), 'Downloads', defaultFilename),
-            properties: ['createDirectory'],
-        });
+ipcMain.handle(
+    'download-select-destination',
+    async (event, defaultFilename, defaultDirectory) => {
+        try {
+            const baseDirectory =
+                defaultDirectory && defaultDirectory.trim()
+                    ? defaultDirectory
+                    : path.join(os.homedir(), 'Downloads');
+            const result = await dialog.showSaveDialog({
+                defaultPath: path.join(baseDirectory, defaultFilename),
+                properties: ['createDirectory'],
+            });
 
-        if (result.canceled) {
-            return null;
+            if (result.canceled) {
+                return null;
+            }
+
+            return result.filePath;
+        } catch (err) {
+            console.error('select-destination error:', err);
+            return { error: err.message };
         }
-
-        return result.filePath;
-    } catch (err) {
-        console.error('select-destination error:', err);
-        return { error: err.message };
     }
-});
+);
 
 /**
  * IPC Handler: Start a download

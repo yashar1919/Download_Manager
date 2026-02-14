@@ -9,7 +9,8 @@ contextBridge.exposeInMainWorld('electron', {
         fetchMetadata: (url) => ipcRenderer.invoke('download-fetch-metadata', url),
 
         // Select download destination
-        selectDestination: (defaultFilename) => ipcRenderer.invoke('download-select-destination', defaultFilename),
+        selectDestination: (defaultFilename, defaultDirectory) =>
+            ipcRenderer.invoke('download-select-destination', defaultFilename, defaultDirectory),
 
         // Start a download
         start: (downloadId, url, destinationPath) =>
