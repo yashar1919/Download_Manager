@@ -208,6 +208,11 @@ export default function App() {
       const result = await window.electron?.download?.pause?.(downloadId);
       if (result?.error) {
         setError(result.error);
+      } else if (result?.download) {
+        // Update the download state in UI immediately
+        setDownloads((prev) =>
+          prev.map((d) => (d.id === downloadId ? result.download : d)),
+        );
       }
     } catch (err) {
       setError("Failed to pause: " + err.message);

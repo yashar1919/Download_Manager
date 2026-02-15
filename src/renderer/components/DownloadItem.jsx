@@ -34,7 +34,7 @@ export default function DownloadItem({
     if (!download.totalBytes || download.totalBytes === 0) return 0;
     return Math.min(
       100,
-      (download.bytesDownloaded / download.totalBytes) * 100
+      (download.bytesDownloaded / download.totalBytes) * 100,
     );
   };
 
@@ -43,26 +43,26 @@ export default function DownloadItem({
       case "downloading":
         return (
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M7 10l5 5 5-5z" />
+            <path d="M13 5H11V9H5L12 16L19 9H13V5M19 18H5V20H19V18Z" />
           </svg>
         );
       case "paused":
         return (
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+            <path d="M6 4H8V20H6V4M16 4H18V20H16V4Z" />
           </svg>
         );
       case "completed":
         return (
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+            <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" />
           </svg>
         );
       case "error":
       case "cancelled":
         return (
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+            <path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22S22 17.52 22 12S17.52 2 12 2M13 17H11V15H13V17M13 13H11V7H13V13Z" />
           </svg>
         );
       default:

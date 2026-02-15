@@ -73,7 +73,8 @@ ipcMain.handle('download-start', async (event, downloadId, url, destinationPath)
 ipcMain.handle('download-pause', async (event, downloadId) => {
     try {
         downloadManager.pauseDownload(downloadId);
-        return { success: true };
+        const downloadData = downloadManager.getDownloadStatus(downloadId);
+        return { success: true, download: downloadData };
     } catch (err) {
         console.error('download-pause error:', err);
         return { error: err.message };

@@ -1,119 +1,205 @@
 # راهنمای بیلد ویندوز
 
-## مشکل
+## مشکل آیکون روی ویندوز
 
-برای بیلد گرفتن برای ویندوز روی لینوکس، به Wine نیاز داریم. نصب Wine ممکنه زمان‌بر باشه.
+اگر بعد از بیلد روی ویندوز، برنامه آیکون Electron دیفالت رو نشون میده، اغلب دلیلش یکی از این موارد هست:
 
-## راه‌حل‌های موجود
+1. **پوشهٔ `build/icons` وجود نداره**
+2. **فایل `icon.ico` جا نیافتادهٔ**
+3. **پوشهٔ `node_modules` پاک شده بود و دوباره نصب نشد**
 
-### روش 1: صبر کردن تا Wine نصب بشه (توصیه می‌شود)
+### راه‌حل سریع
 
-نصب Wine در حال انجامه. وقتی تموم شد، این دستور رو اجرا کن:
+#### مرحله 1: Clone کن
 
-```bash
+```cmd
+git clone https://github.com/yashar1919/Download_Manager.git
+cd Download_Manager
+```
+
+#### مرحله 2: Dependencies نصب کن
+
+```cmd
+npm install
+```
+
+#### مرحله 3: چک کن که آیکون‌ها موجود هستند
+
+```cmd
+dir build\icons
+```
+
+انتظار دارو این فایل‌ها رو ببینی:
+
+- `icon.ico` ✅
+- `icon.png`
+- `256x256.png`
+- `128x128.png`
+- و...
+
+#### مرحله 4: Build کن
+
+```cmd
 npm run build:windows
 ```
 
-یا:
-
-```bash
-npx electron-builder --windows nsis portable
-```
-
-### روش 2: استفاده از GitHub Actions (بهترین روش)
-
-یک workflow در `.github/workflows/build.yml` بساز که خودکار برای هر دو پلتفرم بیلد بگیره:
-
-```yaml
-name: Build
-
-on:
-  push:
-    tags:
-      - "v*"
-  workflow_dispatch:
-
-jobs:
-  build-linux:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - run: npm install
-      - run: npm run build:linux
-      - uses: actions/upload-artifact@v3
-        with:
-          name: linux-builds
-          path: |
-            dist/*.deb
-            dist/*.AppImage
-
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - run: npm install
-      - run: npm run build:windows
-      - uses: actions/upload-artifact@v3
-        with:
-          name: windows-builds
-          path: dist/*.exe
-```
-
-### روش 3: بیلد روی ویندوز
-
-اگر دسترسی به ماشین ویندوز داری:
+یا برای **نسخهٔ Portable** تنها:
 
 ```cmd
+npm run build:windows -- --win portable
+```
+
+یا برای **نسخهٔ NSIS نصب‌کننده** تنها:
+
+```cmd
+npm run build:windows -- --win nsis
+```
+
+### مرحله 5: چک کن آیا بیلد موفق بود
+
+```cmd
+dir dist
+```
+
+باید این فایل‌ها رو ببینی:
+
+- `Download Manager-1.0.0-Portable.exe` (نسخهٔ قابل حمل)
+- `Download Manager-1.0.0-Setup.exe` (نصب‌کننده)
+
+---
+
+## اگر مشکل آیکون ادامه داشت
+
+اگر با وجود این تمام مراحل، هنوز آیکون نشون داده نمیشه:
+
+### راه‌حل 1: صرافی package.json
+
+اطمینان بده این خطوط توی `package.json` موجود هستند:
+
+```json
+"build": {
+  "icon": "build/icons/icon.png",
+  "win": {
+    "icon": "build/icons/icon.ico"
+  }
+}
+```
+
+### راه‌حل 2: Regenerate کن icon.ico
+
+اگر فایل `icon.ico` خراب شده باشه:
+
+```cmd
+# نیاز به Python داره
+cd build\icons
+python create_icon.py
+```
+
+برای اینکه این کار کند، باید Logo تو در `logo.png` باشه در فولدر `build/icons`.
+
+### راه‌حل 3: پاک کن و دوباره بیلد بگیر
+
+```cmd
+rmdir /s /q dist node_modules
 npm install
 npm run build:windows
 ```
 
-### روش 4: استفاده از Docker
+---
 
-```bash
-docker run --rm -ti \
-  --env-file <(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_') \
-  --env ELECTRON_CACHE="/root/.cache/electron" \
-  --env ELECTRON_BUILDER_CACHE="/root/.cache/electron-builder" \
-  -v ${PWD}:/project \
-  -v ~/.cache/electron:/root/.cache/electron \
-  -v ~/.cache/electron-builder:/root/.cache/electron-builder \
-  electronuserland/builder:wine \
-  /bin/bash -c "npm install && npm run build:windows"
+## دستورات مفید برای ویندوز
+
+| دستور                                     | توضیح                                  |
+| ----------------------------------------- | -------------------------------------- |
+| `npm run dev`                             | اجرای Development mode                 |
+| `npm run build:windows`                   | بیلد برای ویندوز (NSIS + Portable)     |
+| `npm run build:windows -- --win portable` | فقط نسخهٔ Portable                     |
+| `npm run build:windows -- --win nsis`     | فقط نصب‌کننده                          |
+| `npm run build:renderer`                  | فقط Vite build (بدون electron-builder) |
+| `npm run pack`                            | Packed بدون کمپرس (برای تست)           |
+
+---
+
+## ساختار فولدر‌ها
+
+```
+Download_Manager/
+├── build/
+│   └── icons/              ← آیکون‌ها باید اینجا باشند
+│       ├── icon.ico        ⬅️ مهمترین برای ویندوز
+│       ├── icon.png
+│       ├── 256x256.png
+│       └── ...
+├── src/
+│   └── renderer/
+├── main/
+│   ├── index.js
+│   ├── downloadManager.js
+│   └── preload.js
+├── dist/                    ← بیلد خروجی (بعد از npm run build)
+├── package.json             ⬅️ کنفیگ electron-builder
+└── vite.config.js
 ```
 
-## فایل‌های خروجی
+---
 
-### لینوکس (آماده است! ✅)
+## نکات مهم
 
-- `dist/aymusic-player_1.0.0_amd64.deb` - بسته Debian
-- `dist/AYMusic Player-1.0.0.AppImage` - بسته AppImage
+✅ **آیکون باید `icon.ico` باشه** - Windows فقط .ico فرمت رو میشناسه
+✅ **باید 256x256 یا بزرگتر باشه** - Windows برای تولید سایز‌های کوچک‌تر استفاده میکنه
+✅ **پیش از بیلد، `npm install` اجزا لازمه**
+✅ **مطمئن شو که هیچ Error بوقت بیلد نیومده**
+✅ **اگر از Antivirus استفاده میکنی، ممکنه exe رو block کنه**
 
-### ویندوز (در انتظار Wine یا استفاده از روش‌های بالا)
+---
 
-- `dist/AYMusic Player-1.0.0-Setup.exe` - نصب‌کننده NSIS
-- `dist/AYMusic Player-1.0.0-Portable.exe` - نسخه قابل حمل
+## مثال کامل
 
-## تنظیمات اعمال شده برای ویندوز
+```cmd
+# 1. Clone
+git clone https://github.com/yashar1919/Download_Manager.git
+cd Download_Manager
 
-✅ آیکون .ico ساخته شد
-✅ NSIS installer با تنظیمات کامل
-✅ File associations برای فرمت‌های صوتی
-✅ نسخه Portable
-✅ Desktop و Start Menu shortcuts
-✅ قابلیت انتخاب مسیر نصب
+# 2. Install
+npm install
 
-## نکته مهم
+# 3. Test (اختیاری)
+npm run dev
 
-اگر می‌خوای بیلد ویندوز رو هم الان داشته باشی، بهترین کار اینه که:
+# 4. Build
+npm run build:windows
 
-1. از GitHub Actions استفاده کنی (workflow رو push کن)
-2. یا منتظر بمونی تا Wine نصب بشه (حدود 5-10 دقیقه)
+# 5. نتیجه رو چک کن
+dir dist
+```
 
-بیلد‌های لینوکس آماده هستن و می‌تونی ازشون استفاده کنی! 🎉
+خلاص! 🎉
+
+---
+
+## اگر مشکل حل نشد
+
+اگر بعد از این مراحل آیکون هنوز نشون داده نمیشه:
+
+1. ✅ چک کن که `build\icons\icon.ico` وجود داره (حجم باید بزرگتر از 100KB باشه)
+2. ✅ `dist` فولدر رو پاک کن و دوباره بیلد بگیر
+3. ✅ `node_modules` رو پاک کن و `npm install` اجرا کن
+4. ✅ اگر از antivirus استفاده میکنی، بند کن و دوباره بپروب
+
+---
+
+## Windows قبل از Build
+
+**سیستم‌های ضروری:**
+
+- **Node.js 18+** (از https://nodejs.org دانلود کن)
+- **Git** (اختیاری، برای clone کردن)
+
+بعد از نصب Node.js:
+
+```cmd
+node --version
+npm --version
+```
+
+باید نسخه‌ها رو نشون بده. اگر نه، سیستم رو restart کن.

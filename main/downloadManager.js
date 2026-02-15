@@ -76,6 +76,56 @@ class DownloadManager extends EventEmitter {
     }
 
     /**
+     * Follow HTTP redirects (3xx status codes)
+     * @param {string} urlString - Initial URL
+     * @param {number} maxRedirects - Maximum redirects to follow (default: 5)
+     * @returns {Promise<string>} - Final URL after following redirects
+     */
+    async followRedirects(urlString, maxRedirects = 5) {
+        if (maxRedirects <= 0) {
+            throw new Error('Too many redirects');
+        }
+
+        const url = new URL(urlString);
+        const protocol = url.protocol === 'https:' ? https : http;
+
+        return new Promise((resolve, reject) => {
+            const request = protocol.request(url, { method: 'HEAD' }, (res) => {
+                // Handle redirects (3xx)
+                if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                    request.destroy();
+                    let nextUrl = res.headers.location;
+
+                    // Handle relative URLs
+                    if (!nextUrl.startsWith('http://') && !nextUrl.startsWith('https://')) {
+                        nextUrl = new URL(nextUrl, urlString).href;
+                    }
+
+                    // Recursively follow the redirect
+                    this.followRedirects(nextUrl, maxRedirects - 1)
+                        .then(resolve)
+                        .catch(reject);
+                } else {
+                    // No redirect, return the current URL
+                    request.destroy();
+                    resolve(urlString);
+                }
+            });
+
+            request.on('error', (err) => {
+                reject(err);
+            });
+
+            request.setTimeout(5000, () => {
+                request.destroy();
+                reject(new Error('Redirect follow timeout'));
+            });
+
+            request.end();
+        });
+    }
+
+    /**
      * Validates if a URL is downloadable
      * @param {string} urlString - URL to validate
      * @returns {boolean}
@@ -173,11 +223,29 @@ class DownloadManager extends EventEmitter {
      * @returns {Promise<object>} - Metadata object
      */
     async fetchMetadata(urlString) {
+        // Follow redirects first
+        try {
+            urlString = await this.followRedirects(urlString);
+        } catch (err) {
+            console.warn('Redirect follow failed, trying original URL:', err.message);
+            // Continue with original URL if redirect fails
+        }
+
         return new Promise((resolve, reject) => {
             const url = new URL(urlString);
             const protocol = url.protocol === 'https:' ? https : http;
 
             const request = protocol.request(url, { method: 'HEAD' }, (res) => {
+                // Handle redirects in metadata fetch too
+                if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                    request.destroy();
+                    const nextUrl = res.headers.location.startsWith('http')
+                        ? res.headers.location
+                        : new URL(res.headers.location, urlString).href;
+                    this.fetchMetadata(nextUrl).then(resolve).catch(reject);
+                    return;
+                }
+
                 const supportsRange = res.headers['accept-ranges'] === 'bytes';
                 const contentLength = parseInt(res.headers['content-length'] || '0', 10);
                 const fileName = this.getFileName(urlString, res.headers);
@@ -211,10 +279,18 @@ class DownloadManager extends EventEmitter {
      * @param {string} downloadId - Unique identifier for this download
      * @param {string} urlString - URL to download
      * @param {string} destinationPath - Full file path to save to
-     * @param {object} options - Optional parameters
+     * @param {object} options - Optional parameters (resume, redirectCount)
      * @returns {Promise<void>}
      */
     async startDownload(downloadId, urlString, destinationPath, options = {}) {
+        // Limit redirects to prevent infinite loops
+        if (!options.redirectCount) {
+            options.redirectCount = 0;
+        }
+        if (options.redirectCount > 5) {
+            throw new Error('Too many redirects');
+        }
+
         // Allow resuming existing downloads
         if (this.downloads.has(downloadId) && !options.resume) {
             throw new Error(`Download ${downloadId} already exists`);
@@ -250,6 +326,15 @@ class DownloadManager extends EventEmitter {
         }
 
         try {
+            // Follow redirects to get final URL
+            try {
+                urlString = await this.followRedirects(urlString);
+                downloadData.url = urlString; // Update stored URL to final URL
+            } catch (err) {
+                console.warn('Redirect follow failed, trying original URL:', err.message);
+                // Continue with original URL if redirect fails
+            }
+
             // If resuming a partial download, get current file size
             let startByte = 0;
             if (options.resume && fs.existsSync(destinationPath)) {
@@ -283,6 +368,25 @@ class DownloadManager extends EventEmitter {
             }
 
             const request = protocol.request(url, { headers }, (res) => {
+                // Handle redirects in download request too
+                if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                    fileStream.destroy();
+                    request.destroy();
+                    const nextUrl = res.headers.location.startsWith('http')
+                        ? res.headers.location
+                        : new URL(res.headers.location, urlString).href;
+                    // Retry with redirect URL
+                    options.redirectCount = (options.redirectCount || 0) + 1;
+                    this.startDownload(downloadId, nextUrl, destinationPath, options).catch((err) => {
+                        downloadData.state = 'error';
+                        downloadData.error = err.message;
+                        this.downloads.set(downloadId, downloadData);
+                        this.emitProgress(downloadId);
+                        this.scheduleSave();
+                    });
+                    return;
+                }
+
                 // Update total bytes if not already set
                 if (res.statusCode === 206 || res.statusCode === 200) {
                     if (res.headers['content-length']) {
@@ -327,6 +431,10 @@ class DownloadManager extends EventEmitter {
                     });
 
                     res.on('error', (err) => {
+                        // Skip error handling if download was paused
+                        if (downloadData.state === 'paused') {
+                            return;
+                        }
                         downloadData.state = 'error';
                         downloadData.error = err.message;
                         fileStream.destroy();
@@ -354,7 +462,7 @@ class DownloadManager extends EventEmitter {
             });
 
             // Store stream reference for pause/resume
-            this.downloadStreams.set(downloadId, { request, fileStream });
+            this.downloadStreams.set(downloadId, { request, fileStream, isPausing: false });
 
             // Handle completion
             fileStream.on('finish', () => {
@@ -401,16 +509,33 @@ class DownloadManager extends EventEmitter {
             throw new Error(`Download is ${downloadData.state}, cannot pause`);
         }
 
-        const streams = this.downloadStreams.get(downloadId);
-        if (streams) {
-            streams.request.destroy();
-            streams.fileStream.destroy();
-            this.downloadStreams.delete(downloadId);
-        }
-
+        // First, update state to paused BEFORE destroying streams
         downloadData.state = 'paused';
         this.downloads.set(downloadId, downloadData);
         this.emitProgress(downloadId);
+
+        const streams = this.downloadStreams.get(downloadId);
+        if (streams) {
+            try {
+                // Replace response error handler to ignore expected errors
+                streams.request.on('error', () => {
+                    // Ignore errors during pause
+                });
+
+                // Destroy request to stop receiving data
+                streams.request.destroy();
+
+                // Gracefully close file stream so pause/resume works
+                if (streams.fileStream && !streams.fileStream.destroyed) {
+                    streams.fileStream.destroy();
+                }
+
+                this.downloadStreams.delete(downloadId);
+            } catch (err) {
+                console.warn('Error while destroying streams:', err.message);
+            }
+        }
+
         this.scheduleSave();
     }
 

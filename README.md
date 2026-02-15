@@ -417,7 +417,7 @@ Free to use commercially and personally.
 
 ## Support
 
-- 📧 Email: yashar@example.com
+- 📧 Email: yashartalebi19@gmail.com
 - 🐛 Issues: [GitHub Issues](https://github.com/yashar1919/download_manager/issues)
 - 📚 Documentation: [DOWNLOAD_MANAGER_GUIDE.md](./DOWNLOAD_MANAGER_GUIDE.md)
 
@@ -425,7 +425,7 @@ Free to use commercially and personally.
 
 <div align="center">
   <p>
-    <strong>Made with ❤ by <a href="https://github.com/yashar1919">Univision Studio</a></strong>
+    <strong>Made with ❤ by <a href="https://univisionstudio.ir">Univision Studio</a></strong>
   </p>
   <p>
     <em>Building tools that make a difference</em>
