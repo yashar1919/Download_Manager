@@ -1,16 +1,16 @@
 @echo off
 REM ============================================
-REM Download Manager - Windows Build Script
+REM UVDM - Windows Build Script
 REM ============================================
 REM
-REM این اسکریپت برای بیلد گرفتن از Download Manager روی ویندوز هست
+REM این اسکریپت برای بیلد گرفتن از UVDM روی ویندوز هست
 REM اینجا کلیک کن و صبر کن!
 REM
 
 cls
 echo.
 echo ====================================
-echo   Download Manager - Windows Build
+echo   UVDM - Windows Build
 echo ====================================
 echo.
 
@@ -70,7 +70,7 @@ echo   Build موفق بود!
 echo ====================================
 echo.
 echo نتیجهٔ بیلد در اینجا است:
-echo   dist\Download Manager-1.0.0-Portable.exe
-echo   dist\Download Manager-1.0.0-Setup.exe
+echo   dist\UVDM-1.0.0-Portable.exe
+echo   dist\UVDM Setup 1.0.0.exe
 echo.
 pause

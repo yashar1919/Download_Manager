@@ -63,8 +63,8 @@ dir dist
 
 باید این فایل‌ها رو ببینی:
 
-- `Download Manager-1.0.0-Portable.exe` (نسخهٔ قابل حمل)
-- `Download Manager-1.0.0-Setup.exe` (نصب‌کننده)
+- `UVDM-1.0.0-Portable.exe` (نسخهٔ قابل حمل)
+- `UVDM Setup 1.0.0.exe` (نصب‌کننده)
 
 ---
 

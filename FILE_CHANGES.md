@@ -18,13 +18,11 @@ This document lists all files that were created, modified, or removed during the
 ### New React Components
 
 - **`src/renderer/components/URLInput.jsx`** (130 lines)
-
   - URL input field with validation
   - Clipboard detection and suggestion
   - Error message display
 
 - **`src/renderer/components/DownloadDialog.jsx`** (110 lines)
-
   - File information display modal
   - Filename editor
   - Destination selector
@@ -51,7 +49,7 @@ This document lists all files that were created, modified, or removed during the
 ### Configuration
 
 - **`package.json`**
-  - Changed name from `aymusic-player` to `download-manager`
+  - Changed name from `aymusic-player` to `uvdm`
   - Updated description and keywords
   - Updated electron-builder config (removed audio mime types)
   - Updated build metadata
@@ -147,21 +145,18 @@ Key Directories:    main/, src/renderer/, src/renderer/components/
 ✅ **What Stayed the Same:**
 
 1. **Electron Structure**
-
    - Main process handling
    - IPC communication pattern
    - Context isolation
    - Security setup
 
 2. **React Setup**
-
    - Vite dev server
    - Hot module reloading
    - Component-based structure
    - React 19.2.3
 
 3. **Theming System**
-
    - CSS custom properties
    - localStorage persistence
    - System theme detection
@@ -169,7 +164,6 @@ Key Directories:    main/, src/renderer/, src/renderer/components/
    - Light/Dark/System modes
 
 4. **Build System**
-
    - Vite configuration
    - electron-builder setup
    - deb packaging
@@ -194,7 +188,7 @@ Key Directories:    main/, src/renderer/, src/renderer/components/
 
 **Updated:**
 
-- appId: `com.aymusic.player` → `com.downloadmanager.app`
+- appId: `com.aymusic.player` → `com.univision.uvdm.app`
 - productName: `AYMusic Player` → `Download Manager`
 - Linux category: `AudioVideo` → `Utility`
 

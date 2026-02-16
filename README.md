@@ -1,4 +1,4 @@
-# Download Manager
+# UVDM
 
 > **A minimalist, production-ready desktop download manager built with Electron.js and React**
 
@@ -58,15 +58,15 @@
 
 ```bash
 # Download from releases page, then:
-sudo apt install ./download-manager-1.0.0.deb
-download-manager
+sudo apt install ./uvdm_1.0.0_amd64.deb
+uvdm
 ```
 
 **AppImage (Any Linux):**
 
 ```bash
-chmod +x download-manager-1.0.0.AppImage
-./download-manager-1.0.0.AppImage
+chmod +x UVDM-1.0.0.AppImage
+./UVDM-1.0.0.AppImage
 ```
 
 ### From Source
@@ -275,7 +275,7 @@ A: Verify URL starts with `http://` or `https://`, select destination folder, ch
 A: Some servers don't support Range requests. Try a different URL.
 
 **Q: AppImage won't run**  
-A: Make it executable: `chmod +x download-manager-*.AppImage`
+A: Make it executable: `chmod +x UVDM-*.AppImage`
 
 **Q: High memory usage**  
 A: Downloads use streaming for efficiency. Close other applications if needed.
@@ -342,10 +342,10 @@ npm run dist:all         # Build all formats
 
 ### Distribution Formats
 
-- **Debian Package** - `dist/download-manager-1.0.0.deb`
-- **AppImage** - `dist/download-manager-1.0.0.AppImage`
-- **Windows NSIS** - `dist/download-manager-Setup-1.0.0.exe`
-- **Windows Portable** - `dist/download-manager-1.0.0-Portable.exe`
+- **Debian Package** - `dist/uvdm_1.0.0_amd64.deb`
+- **AppImage** - `dist/UVDM-1.0.0.AppImage`
+- **Windows NSIS** - `dist/UVDM Setup 1.0.0.exe`
+- **Windows Portable** - `dist/UVDM-1.0.0-Portable.exe`
 
 See [LINUX_BUILD_GUIDE.md](./LINUX_BUILD_GUIDE.md) for detailed build instructions.
 

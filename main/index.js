@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog, clipboard } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const http = require('http');
 const DownloadManager = require('./downloadManager');
 
 // Initialize download manager
@@ -9,6 +10,7 @@ const downloadManager = new DownloadManager();
 
 // Store last clipboard content to detect changes
 let lastClipboardContent = '';
+let integrationServer = null;
 
 /**
  * IPC Handler: Fetch metadata about a URL without downloading
@@ -193,15 +195,111 @@ function createWindow() {
     }
 }
 
+function notifyIncomingUrl(url) {
+    const wins = BrowserWindow.getAllWindows();
+    wins.forEach((win) => {
+        win.webContents.send('clipboard-url-detected', url);
+    });
+
+    const first = wins[0];
+    if (first) {
+        if (first.isMinimized()) {
+            first.restore();
+        }
+        first.focus();
+    }
+}
+
+function startIntegrationServer() {
+    integrationServer = http.createServer((req, res) => {
+        const responseHeaders = {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+        };
+
+        if (req.url === '/api/health' && req.method === 'GET') {
+            res.writeHead(200, responseHeaders);
+            res.end(JSON.stringify({ ok: true }));
+            return;
+        }
+
+        if (req.url !== '/api/enqueue') {
+            res.writeHead(404, responseHeaders);
+            res.end(JSON.stringify({ error: 'Not found' }));
+            return;
+        }
+
+        if (req.method === 'OPTIONS') {
+            res.writeHead(204, responseHeaders);
+            res.end();
+            return;
+        }
+
+        if (req.method !== 'POST') {
+            res.writeHead(405, responseHeaders);
+            res.end(JSON.stringify({ error: 'Method not allowed' }));
+            return;
+        }
+
+        let raw = '';
+        req.on('data', (chunk) => {
+            raw += chunk;
+            if (raw.length > 1024 * 1024) {
+                res.writeHead(413, responseHeaders);
+                res.end(JSON.stringify({ error: 'Payload too large' }));
+                req.destroy();
+            }
+        });
+
+        req.on('end', () => {
+            try {
+                const parsed = JSON.parse(raw || '{}');
+                const url = typeof parsed.url === 'string' ? parsed.url.trim() : '';
+
+                if (!downloadManager.isValidUrl(url)) {
+                    res.writeHead(400, responseHeaders);
+                    res.end(JSON.stringify({ error: 'Invalid URL' }));
+                    return;
+                }
+
+                notifyIncomingUrl(url);
+                res.writeHead(200, responseHeaders);
+                res.end(JSON.stringify({ success: true }));
+            } catch (err) {
+                res.writeHead(400, responseHeaders);
+                res.end(JSON.stringify({ error: 'Invalid payload' }));
+            }
+        });
+    });
+
+    integrationServer.listen(37821, '127.0.0.1', () => {
+        console.log('Integration server listening on http://127.0.0.1:37821');
+    });
+
+    integrationServer.on('error', (err) => {
+        console.error('Integration server error:', err);
+    });
+}
+
 // App lifecycle
 app.whenReady().then(() => {
     downloadManager.setStoragePath(app.getPath('userData'));
     createWindow();
     startClipboardMonitor();
+    startIntegrationServer();
 });
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('before-quit', () => {
+    if (integrationServer) {
+        integrationServer.close();
+        integrationServer = null;
+    }
 });
 
 app.on('activate', () => {

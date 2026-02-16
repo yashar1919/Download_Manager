@@ -229,7 +229,6 @@ Documentation:          Comprehensive
 ### Developer Documentation
 
 2. **DOWNLOAD_MANAGER_GUIDE.md** (500 lines)
-
    - Architecture overview
    - Component descriptions
    - IPC communication details
@@ -241,7 +240,6 @@ Documentation:          Comprehensive
    - Future enhancements roadmap
 
 3. **LINUX_BUILD_GUIDE.md** (400 lines)
-
    - System requirements
    - Build setup
    - Packaging (deb + AppImage)
@@ -252,7 +250,6 @@ Documentation:          Comprehensive
    - Version updates
 
 4. **IMPLEMENTATION_SUMMARY.md** (500 lines)
-
    - What was changed/preserved
    - Detailed implementation notes
    - File structure breakdown
@@ -363,23 +360,23 @@ npm run dist:all               # Build both
 
 **Output:**
 
-- `dist/download-manager-1.0.0.deb` (Debian package)
-- `dist/download-manager-1.0.0.AppImage` (Portable executable)
+- `dist/uvdm_1.0.0_amd64.deb` (Debian package)
+- `dist/UVDM-1.0.0.AppImage` (Portable executable)
 
 ### Installation
 
 **Debian/Ubuntu:**
 
 ```bash
-sudo dpkg -i dist/download-manager-1.0.0.deb
-download-manager
+sudo dpkg -i dist/uvdm_1.0.0_amd64.deb
+uvdm
 ```
 
 **AppImage (Any Linux):**
 
 ```bash
-chmod +x dist/download-manager-1.0.0.AppImage
-./dist/download-manager-1.0.0.AppImage
+chmod +x dist/UVDM-1.0.0.AppImage
+./dist/UVDM-1.0.0.AppImage
 ```
 
 ---

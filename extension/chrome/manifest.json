@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "UVDM Bridge",
+  "description": "Send download links from Chrome to UVDM desktop app by Univision.",
+  "version": "0.2.0",
+  "permissions": [
+    "contextMenus",
+    "downloads",
+    "storage",
+    "nativeMessaging",
+    "notifications"
+  ],
+  "host_permissions": ["http://127.0.0.1/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "128": "icon-128.png"
+  },
+  "action": {
+    "default_title": "UVDM Bridge",
+    "default_popup": "popup.html"
+  }
+}

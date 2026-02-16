@@ -33,8 +33,8 @@ npm run build:windows
 
 ```json
 "build": {
-  "appId": "com.downloadmanager.app",
-  "productName": "Download Manager",
+  "appId": "com.univision.uvdm.app",
+  "productName": "UVDM",
   "icon": "build/icons/icon.png",
   "win": {
     "target": [
@@ -97,8 +97,8 @@ dir dist
 باید این فایل‌ها رو ببینی:
 
 ```
-Download Manager-1.0.0-Portable.exe
-Download Manager-1.0.0-Setup.exe
+UVDM-1.0.0-Portable.exe
+UVDM Setup 1.0.0.exe
 ```
 
 ---
@@ -152,7 +152,7 @@ Download_Manager/
 ### Visual Check
 
 1. بیلد تموم شد
-2. `dist\Download Manager-1.0.0-Portable.exe` رو دو برابر کلیک کن
+2. `dist\UVDM-1.0.0-Portable.exe` رو دو برابر کلیک کن
 3. **قبل من نصب کن** بررسی کن:
    - بالای پنجره icon تغییر کرده
    - File Explorer میشناسه icon رو
@@ -161,14 +161,14 @@ Download_Manager/
 
 ```cmd
 REM Windows 10+
-wmic datafile where name="C:\\Users\\<YOUR_USER>\\Desktop\\Download Manager-portable.exe" get Description,Version
+wmic datafile where name="C:\\Users\\<YOUR_USER>\\Desktop\\UVDM-1.0.0-Portable.exe" get Description,Version
 ```
 
 یا:
 
 ```cmd
 REM PowerShell
-(Get-Item "C:\Users\<YOUR_USER>\Downloaded\Download Manager-1.0.0-Portable.exe").VersionInfo
+(Get-Item "C:\Users\<YOUR_USER>\Downloaded\UVDM-1.0.0-Portable.exe").VersionInfo
 ```
 
 ---

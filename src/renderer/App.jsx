@@ -280,12 +280,8 @@ export default function App() {
     <div className="app">
       <header className="header">
         <div className="brand">
-          <img
-            className="brand-logo"
-            src="./logo.png"
-            alt="Univision Studio logo"
-          />
-          <h1 className="app-title">Download Manager</h1>
+          <img className="brand-logo" src="./logo.png" alt="Univision logo" />
+          <h1 className="app-title">UVDM</h1>
         </div>
         <div className="header-controls">
           <ThemeSwitch theme={theme} onThemeChange={handleThemeChange} />
@@ -376,8 +372,7 @@ export default function App() {
       {/* Footer */}
       <footer className="app-footer">
         <p>
-          Made with <span className="heart">❤</span> by{" "}
-          <strong>Univision Studio</strong>
+          <strong>UVDM</strong> by <strong>Univision</strong>
         </p>
       </footer>
     </div>

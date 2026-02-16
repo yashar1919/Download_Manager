@@ -1,4 +1,4 @@
-# Download Manager - Quick Start
+# UVDM - Quick Start
 
 ## Installation
 
@@ -192,10 +192,10 @@ The dialog prevents starting without a destination selected.
 npm run dist
 
 # Install
-sudo dpkg -i dist/download-manager-1.0.0.deb
+sudo dpkg -i dist/uvdm_1.0.0_amd64.deb
 
 # Run from terminal
-download-manager
+uvdm
 
 # Or click in application menu
 ```
@@ -212,7 +212,7 @@ electron-builder --publish never
 
 ## File Support
 
-Download Manager supports any file type accessible via HTTP/HTTPS:
+UVDM supports any file type accessible via HTTP/HTTPS:
 
 - **Videos:** MP4, MKV, AVI, MOV
 - **Audio:** MP3, FLAC, WAV, M4A
@@ -252,7 +252,7 @@ Downloaded files are yours alone.
 A: Some servers don't send final chunk until connection closes. Give it a moment, or pause and resume.
 
 **Q: AppImage won't run**
-A: Make executable first: `chmod +x download-manager-*.AppImage`
+A: Make executable first: `chmod +x UVDM-*.AppImage`
 
 **Q: High memory usage**
 A: Large files use streaming to avoid memory overload. Close other apps if needed.

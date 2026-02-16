@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UVDM Bridge</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header class="header">
+        <img src="icon-128.png" alt="UVDM" class="logo" />
+        <div>
+          <h1>UVDM</h1>
+          <p>Univision Bridge Controls</p>
+        </div>
+      </header>
+
+      <section class="card">
+        <label class="toggle-row" for="autoCapture">
+          <div>
+            <strong>Auto Capture</strong>
+            <p>Try to move Chrome downloads to desktop app.</p>
+          </div>
+          <input id="autoCapture" type="checkbox" />
+        </label>
+      </section>
+
+      <section class="card actions">
+        <button id="testConnection" class="btn btn-primary">
+          Test Connection
+        </button>
+      </section>
+
+      <section class="status-wrap">
+        <p id="status" class="status">Ready</p>
+      </section>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

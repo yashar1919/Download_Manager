@@ -76,18 +76,18 @@ This creates optimized React bundle in `dist/`
 npm run dist
 ```
 
-**Output:** `dist/download-manager-1.0.0.deb`
+**Output:** `dist/uvdm_1.0.0_amd64.deb`
 
 **Install:**
 
 ```bash
-sudo dpkg -i dist/download-manager-1.0.0.deb
+sudo dpkg -i dist/uvdm_1.0.0_amd64.deb
 ```
 
 **Uninstall:**
 
 ```bash
-sudo apt-get remove download-manager
+sudo apt-get remove uvdm
 ```
 
 **Benefits:**
@@ -103,13 +103,13 @@ sudo apt-get remove download-manager
 npm run dist:appimage
 ```
 
-**Output:** `dist/download-manager-1.0.0.AppImage`
+**Output:** `dist/UVDM-1.0.0.AppImage`
 
 **Run:**
 
 ```bash
-chmod +x dist/download-manager-1.0.0.AppImage
-./dist/download-manager-1.0.0.AppImage
+chmod +x dist/UVDM-1.0.0.AppImage
+./dist/UVDM-1.0.0.AppImage
 ```
 
 **Benefits:**
@@ -142,9 +142,9 @@ Edit `package.json` `build` section to customize:
     "icon": "build/icons/icon.png",
     "desktop": {
         "entry": {
-            "Name": "Download Manager",
-            "Comment": "Minimalist desktop download manager",
-            "Exec": "download-manager %U",
+            "Name": "UVDM",
+            "Comment": "Univision Download Manager",
+            "Exec": "uvdm %U",
             "Terminal": "false",
             "Type": "Application",
             "Categories": "Utility;Network;",
@@ -199,13 +199,13 @@ ffmpeg -i icon.svg -vf scale=512:512 icon.png
 
 ```bash
 # Check if installed
-which download-manager
+which uvdm
 
 # Check version
-download-manager --version
+uvdm --version
 
 # Check system integration
-desktop-file-validate /usr/share/applications/download-manager.desktop
+desktop-file-validate /usr/share/applications/uvdm.desktop
 ```
 
 ### Test Download Functionality
@@ -230,7 +230,7 @@ npm install
 ### "Permission denied" when running AppImage
 
 ```bash
-chmod +x dist/download-manager-*.AppImage
+chmod +x dist/UVDM-*.AppImage
 ```
 
 ### Cannot find icon file
@@ -258,7 +258,7 @@ sudo apt-get install libnss3 libxss1 libappindicator1
 
 ```bash
 # Try with FUSE disabled
-./dist/download-manager-*.AppImage --appimage-extract
+./dist/UVDM-*.AppImage --appimage-extract
 ./squashfs-root/AppRun
 ```
 
@@ -269,19 +269,16 @@ sudo apt-get install libnss3 libxss1 libappindicator1
 ### Publishing Options
 
 1. **GitHub Releases**
-
    - Upload `.deb` and `.AppImage` files
    - Generate release notes
    - Tag version with `v1.0.0`
 
 2. **PPA (Personal Package Archive)**
-
    - Create Launchpad account
    - Host .deb packages
    - Automatic updates via `apt`
 
 3. **Flathub**
-
    - Submit for review
    - Distributed sandboxed installation
    - Automatic updates
@@ -299,9 +296,9 @@ git push origin v1.0.0
 
 # Upload to GitHub Releases
 hub release create v1.0.0 \
-    -a dist/download-manager-1.0.0.deb \
-    -a dist/download-manager-1.0.0.AppImage \
-    -m "Download Manager v1.0.0"
+    -a dist/uvdm_1.0.0_amd64.deb \
+    -a dist/UVDM-1.0.0.AppImage \
+    -m "UVDM v1.0.0"
 ```
 
 ---
@@ -388,7 +385,7 @@ For production releases, sign the deb package:
 sudo apt-get install dpkg-sig
 
 # Sign the package
-dpkg-sig --sign builder dist/download-manager-1.0.0.deb
+dpkg-sig --sign builder dist/uvdm_1.0.0_amd64.deb
 ```
 
 ### Update Security
@@ -410,14 +407,14 @@ Once installed via deb:
 ```bash
 # Application should appear in application menu
 # Or run from terminal
-download-manager
+uvdm
 
 # Create custom launcher
-cat > ~/.local/share/applications/download-manager.desktop << EOF
+cat > ~/.local/share/applications/uvdm.desktop << EOF
 [Desktop Entry]
-Name=Download Manager
-Exec=download-manager
-Icon=download-manager
+Name=UVDM
+Exec=uvdm
+Icon=uvdm
 Type=Application
 Categories=Utility;Network;
 EOF
@@ -447,8 +444,8 @@ npm run build:renderer
 npm run dist:all
 
 # Test installation
-sudo dpkg -i dist/download-manager-1.1.0.deb
-download-manager --version  # Should show 1.1.0
+sudo dpkg -i dist/uvdm_1.1.0_amd64.deb
+uvdm --version  # Should show 1.1.0
 ```
 
 ---
@@ -459,7 +456,7 @@ download-manager --version  # Should show 1.1.0
 
 1. Check [Electron documentation](https://www.electronjs.org/docs)
 2. Review [electron-builder issues](https://github.com/electron-userland/electron-builder/issues)
-3. Check application logs: `~/.config/download-manager/`
+3. Check application logs: `~/.config/UVDM/`
 
 ### Reporting Bugs
 

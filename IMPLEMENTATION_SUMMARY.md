@@ -25,20 +25,17 @@ Successfully transformed an Electron music player into a production-ready, minim
 ### ✅ Preserved (Good Decisions)
 
 1. **Electron + Vite + React Architecture**
-
    - Main/renderer process separation
    - HMR development server
    - Proper context isolation
 
 2. **Theme System**
-
    - CSS variable-based theming
    - localStorage persistence
    - System theme detection
    - 5 color palettes (Zorin, Ubuntu, Mint, Manjaro, Elementary)
 
 3. **Build Configuration**
-
    - electron-builder setup
    - Linux packaging (deb, AppImage)
    - Windows packaging support
@@ -268,14 +265,12 @@ DownloadItem components (real-time update)
 **Sub-Components:**
 
 1. **URLInput.jsx** (130 lines)
-
    - URL input field with validation
    - Paste from clipboard button
    - Clipboard suggestion display
    - Error message display
 
 2. **DownloadDialog.jsx** (110 lines)
-
    - File information display
    - Filename editor
    - File size display
@@ -283,7 +278,6 @@ DownloadItem components (real-time update)
    - Confirmation buttons
 
 3. **DownloadItem.jsx** (150 lines)
-
    - Download status icon
    - Progress bar with percentage
    - Speed and ETA display
@@ -721,11 +715,11 @@ npm run dist
 npm run dist:appimage
 
 # Install deb
-sudo apt install ./dist/download-manager-1.0.0.deb
+sudo apt install ./dist/uvdm_1.0.0_amd64.deb
 
 # Run AppImage
-chmod +x dist/download-manager-1.0.0.AppImage
-./dist/download-manager-1.0.0.AppImage
+chmod +x dist/UVDM-1.0.0.AppImage
+./dist/UVDM-1.0.0.AppImage
 ```
 
 ### GitHub Release

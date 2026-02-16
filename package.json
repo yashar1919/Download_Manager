@@ -1,8 +1,8 @@
 {
-  "name": "download-manager",
+  "name": "uvdm",
   "version": "1.0.0",
   "homepage": "https://github.com/yashar1919/download_manager",
-  "description": "A minimalist, production-ready desktop download manager for Linux built with Electron and React",
+  "description": "UVDM (Univision Download Manager) desktop downloader built with Electron and React",
   "license": "MIT",
   "author": "Yashar <yashar@example.com>",
   "repository": {
@@ -39,6 +39,14 @@
     "dist:appimage": "npm run build:renderer && electron-builder --linux AppImage",
     "dist:windows": "electron-builder --windows nsis",
     "dist:all": "npm run build:renderer && electron-builder --linux --windows",
+    "extension:zip": "bash ./scripts/package_extension.sh",
+    "share:bundle": "bash ./scripts/create_share_bundle.sh",
+    "native-host:install": "bash ./native-host/install_linux.sh",
+    "native-host:uninstall": "bash ./native-host/uninstall_linux.sh",
+    "native-host:setup": "bash ./native-host/setup_linux.sh",
+    "native-host:install:windows": "powershell -ExecutionPolicy Bypass -File ./native-host/install_windows.ps1",
+    "native-host:uninstall:windows": "powershell -ExecutionPolicy Bypass -File ./native-host/uninstall_windows.ps1",
+    "native-host:setup:windows": "powershell -ExecutionPolicy Bypass -File ./native-host/setup_windows.ps1",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
@@ -55,8 +63,8 @@
     "react-dom": "^19.2.3"
   },
   "build": {
-    "appId": "com.downloadmanager.app",
-    "productName": "Download Manager",
+    "appId": "com.univision.uvdm.app",
+    "productName": "UVDM",
     "icon": "build/icons/icon.png",
     "files": [
       "dist/**",
@@ -93,7 +101,7 @@
       "deleteAppDataOnUninstall": false,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Download Manager",
+      "shortcutName": "UVDM",
       "installerIcon": "build/icons/icon.ico",
       "uninstallerIcon": "build/icons/icon.ico",
       "installerHeaderIcon": "build/icons/icon.ico",
@@ -110,17 +118,17 @@
       ],
       "category": "Utility",
       "maintainer": "Yashar <yashar@example.com>",
-      "vendor": "Download Manager",
-      "synopsis": "Minimalist desktop download manager",
-      "description": "A beautiful and minimalist desktop download manager designed for Linux with pause/resume support",
+      "vendor": "Univision",
+      "synopsis": "UVDM - Univision Download Manager",
+      "description": "UVDM by Univision, a minimalist desktop download manager with pause/resume support",
       "mimeTypes": [],
       "desktop": {
         "entry": {
-          "Name": "Download Manager",
-          "Comment": "Minimalist desktop download manager",
+          "Name": "UVDM",
+          "Comment": "Univision Download Manager",
           "Categories": "Utility;Network;",
-          "Keywords": "Download;Manager;Downloader;File;Transfer;",
-          "StartupWMClass": "Download Manager"
+          "Keywords": "UVDM;Univision;Download;Manager;Downloader;File;Transfer;",
+          "StartupWMClass": "UVDM"
         }
       }
     }
